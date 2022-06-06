@@ -38,7 +38,43 @@ CopyFont:
     or a, c
     jr nz, CopyFont
 
-    ; ld hl, $9850; print sentence on top screen
+    ld de, SayStr
+    ld hl, $9801
+    ld bc, textOverLine
+
+    inc de
+    inc de
+    inc de
+printOverLine:
+    ld a, [bc]
+    ld [hli], a
+
+    ld [rLCDC], a
+
+    ld a, [de]
+    inc de
+    and a
+    jr nz, printOverLine
+
+    ld de, SayStr
+    ld hl, $9841
+    ld bc, textUnderLine
+
+    inc de
+    inc de
+    inc de
+printUnderLine:
+    ld a, [bc]
+    ld [hli], a
+
+    ld [rLCDC], a
+
+    ld a, [de]
+    inc de
+    and a
+    jr nz, printUnderLine
+
+    ld hl, $9820
     ld de, SayStr
 
 CopyString:
@@ -77,7 +113,7 @@ CowCopyFont:
     or a, c
     jr nz, CowCopyFont
 
-    ld hl, $9860
+    ld hl, $9863
     ld de, CowStr
 
 CowCopyString:
@@ -97,16 +133,25 @@ CowCopyString:
 Done:
 	jp Done
 
-SECTION "Font", ROM0
+SECTION "Font", rom0
 
 FontTiles:
 INCBIN "font.chr"
 FontTilesEnd:
 
-SECTION "Cowsay strings", ROM0
+SECTION "Cowsay strings", rom0
+
+spaceChar:
+    db " ", 0
+
+textOverLine:
+    db "_", 0
+
+textUnderLine:
+    db "-", 0
 
 SayStr:
-    db TEXT, 0
+    db "<", TEXT, ">", 0
 
 CowStr:
 	db "\\  ", "                            ",
